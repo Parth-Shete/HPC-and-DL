@@ -1,1 +1,5 @@
 g++ -fopenmp file.cpp -o file ⁠
+
+and 
+
+./filename
