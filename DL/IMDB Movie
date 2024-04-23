@@ -1,0 +1,108 @@
+from tensorflow.keras.datasets import imdb
+---
+
+(train_data, train_label), (test_data, test_label) = imdb.load_data(num_words = 10000)
+---
+
+import numpy as np
+
+def vectorize_sequences(sequences, dimensions = 10000):
+  results = np.zeros((len(sequences), dimensions))
+  for i,sequences in enumerate(sequences):
+    results[i, sequences] = 1
+  return results
+
+x_train = vectorize_sequences(train_data)
+y_train = vectorize_sequences(test_data)
+---
+
+y_train = np.asarray(train_label).astype('float32')
+y_test = np.asarray(test_label).astype('float32')
+---
+
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+---
+
+
+model = Sequential()
+
+model.add(Dense(16,input_shape=(10000,),activation='relu'))
+model.add(Dense(16,activation = 'relu'))
+model.add(Dense(1,activation = 'sigmoid'))
+---
+
+
+model.compile(optimizer='adam', loss = 'mse', metrics = ['accuracy'])
+---    
+
+model.summary()
+---
+
+history = model.fit(x_train, y_train, validation_split = 0.3, epochs = 20, verbose = 1, batch_size = 512)
+---
+
+mse,mae,acc = model.evaluate(x_test,y_test)
+
+print('MSE ',mse)
+print('MAE ',mae)
+print('ACC', acc)
+---
+
+y_preds = model.predict(x_test)
+---
+
+y_preds
+---
+
+y_test
+---
+
+tests=[]
+for i in y_test:
+    tests.append(int(i))
+---
+
+preds=[]
+for i in y_preds:
+    if i[0]>0.5:
+        preds.append(1)
+    else:
+        preds.append(0)
+
+print(preds)
+---
+
+from sklearn.metrics import accuracy_score,precision_score,recall_score
+
+print(accuracy_score(tests,preds))
+print(precision_score(tests,preds))
+print(recall_score(tests,preds))
+---
+
+import pandas as pd
+
+Y_test=[]
+for i in y_test:
+    if i>0.5:
+        Y_test.append("positive")
+    else:
+        Y_test.append("negative")
+
+preds=[]
+for i in y_preds:
+    if i[0]>0.5:
+        preds.append("positive")
+    else:
+        preds.append("negative")
+
+d = pd.DataFrame({'actual':Y_test,'predicted':preds})
+d
+---
+
+def vectorize_sequences(sequences, dimensions = 10000):
+  results = np.zeros((len(sequences), dimensions))
+  for i,sequence in enumerate(sequences):
+    results[i,sequence] = 1
+
+  return results
